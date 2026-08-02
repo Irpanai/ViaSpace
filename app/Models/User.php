@@ -27,6 +27,9 @@ class User extends Authenticatable
         'avatar',
         'address',
         'instagram',
+        'nim',
+        'school',
+        'must_change_password',
     ];
 
     public function schedules()
