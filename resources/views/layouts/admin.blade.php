@@ -73,7 +73,7 @@
         }
         /* Sidebar Transitions */
         .sidebar-transition {
-            transition: width 0.3s ease;
+            transition: width 0.3s ease, transform 0.3s ease;
         }
         .sidebar-collapsed {
             width: 5rem !important; /* 80px */
@@ -90,8 +90,11 @@
 </head>
 <body class="bg-gray-50 h-screen text-gray-800 flex overflow-hidden">
 
+    <!-- Mobile Overlay -->
+    <div id="sidebarOverlay" class="fixed inset-0 bg-black/50 z-40 hidden md:hidden transition-opacity"></div>
+
     <!-- Sidebar -->
-    <aside id="mainSidebar" class="sidebar-transition w-72 bg-gradient-to-b from-gray-900 to-gray-800 shadow-2xl flex-shrink-0 hidden md:flex flex-col h-screen sticky top-0 z-10 text-white">
+    <aside id="mainSidebar" class="sidebar-transition w-72 bg-gradient-to-b from-gray-900 to-gray-800 shadow-2xl flex-shrink-0 fixed md:sticky inset-y-0 left-0 z-50 md:z-10 transform -translate-x-full md:translate-x-0 flex flex-col h-screen text-white">
         <div class="h-20 flex items-center px-6 border-b border-gray-700/50 sidebar-icon-container">
             <div class="flex items-center gap-3">
                 <!-- Via Logo Image -->
@@ -190,6 +193,14 @@
             </div>
         </header>
 
+        <!-- Mobile Header -->
+        <header class="md:hidden glass-panel h-16 flex items-center justify-between px-4 sticky top-0 z-20 shadow-sm w-full">
+            <h1 class="text-xl font-bold text-gray-800 tracking-tight truncate">@yield('title', 'Admin Dashboard')</h1>
+            <button id="mobileSidebarToggle" class="p-2 rounded-xl text-gray-500 hover:bg-gray-100 transition-colors focus:outline-none">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
+            </button>
+        </header>
+
         <main class="p-4 md:p-8 flex-1 overflow-y-auto w-full">
             @if(session('success'))
                 <div class="mb-6 p-4 bg-green-50 border-l-4 border-green-500 text-green-700 rounded-r-md shadow-sm">
@@ -220,9 +231,11 @@
         document.addEventListener('DOMContentLoaded', function() {
             const sidebar = document.getElementById('mainSidebar');
             const toggleBtn = document.getElementById('sidebarToggle');
+            const mobileToggleBtn = document.getElementById('mobileSidebarToggle');
+            const overlay = document.getElementById('sidebarOverlay');
             
-            // Check local storage for preference
-            if(localStorage.getItem('adminSidebarCollapsed') === 'true') {
+            // Check local storage for preference (only apply on desktop)
+            if(window.innerWidth >= 768 && localStorage.getItem('adminSidebarCollapsed') === 'true') {
                 sidebar.classList.add('sidebar-collapsed');
             }
 
@@ -231,6 +244,24 @@
                     sidebar.classList.toggle('sidebar-collapsed');
                     localStorage.setItem('adminSidebarCollapsed', sidebar.classList.contains('sidebar-collapsed'));
                 });
+            }
+
+            function toggleMobileSidebar() {
+                const isClosed = sidebar.classList.contains('-translate-x-full');
+                if (isClosed) {
+                    sidebar.classList.remove('-translate-x-full');
+                    overlay.classList.remove('hidden');
+                } else {
+                    sidebar.classList.add('-translate-x-full');
+                    overlay.classList.add('hidden');
+                }
+            }
+
+            if (mobileToggleBtn) {
+                mobileToggleBtn.addEventListener('click', toggleMobileSidebar);
+            }
+            if (overlay) {
+                overlay.addEventListener('click', toggleMobileSidebar);
             }
 
             // Initialize Tom Select on all select elements
