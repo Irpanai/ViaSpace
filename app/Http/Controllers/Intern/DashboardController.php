@@ -60,6 +60,9 @@ class DashboardController extends Controller
             'lat' => 'required|numeric',
             'lng' => 'required|numeric',
             'photo' => 'required|image|max:5120',
+        ], [
+            'photo.uploaded' => 'Gagal mengunggah foto. Ukuran file terlalu besar, pastikan ukuran foto kurang dari batas maksimal server (biasanya 2MB). Coba kurangi resolusi kamera atau kompres foto Anda.',
+            'photo.max' => 'Ukuran foto maksimal adalah 5MB.',
         ]);
 
         $user = Auth::user();
@@ -136,6 +139,11 @@ class DashboardController extends Controller
             'lat_out' => 'required|numeric',
             'lng_out' => 'required|numeric',
             'photo_out' => 'required|image|max:5120',
+        ], [
+            'photo_out.uploaded' => 'Gagal mengunggah foto bukti pulang. Ukuran file terlalu besar (maks 5MB) atau resolusi kamera terlalu tinggi. Coba kompres foto Anda.',
+            'photo_out.max' => 'Ukuran foto bukti pulang maksimal adalah 5MB.',
+            'photos.*.uploaded' => 'Gagal mengunggah foto logbook. Ukuran file terlalu besar (maks 2MB per foto). Coba kompres foto Anda.',
+            'photos.*.max' => 'Ukuran foto logbook maksimal adalah 2MB per foto.',
         ]);
 
         $user = Auth::user();

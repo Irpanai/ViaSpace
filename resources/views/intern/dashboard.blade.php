@@ -604,5 +604,77 @@
             uploadText.textContent = 'Pilih Foto (Maks. 2)';
         }
     }
+    // Client-side Image Compression
+    async function compressImage(file, maxSizeMB = 1) {
+        return new Promise((resolve) => {
+            const reader = new FileReader();
+            reader.readAsDataURL(file);
+            reader.onload = function(event) {
+                const img = new Image();
+                img.src = event.target.result;
+                img.onload = function() {
+                    const canvas = document.createElement('canvas');
+                    let width = img.width;
+                    let height = img.height;
+                    const max_size = 1280;
+
+                    if (width > height) {
+                        if (width > max_size) {
+                            height *= max_size / width;
+                            width = max_size;
+                        }
+                    } else {
+                        if (height > max_size) {
+                            width *= max_size / height;
+                            height = max_size;
+                        }
+                    }
+
+                    canvas.width = width;
+                    canvas.height = height;
+                    const ctx = canvas.getContext('2d');
+                    ctx.drawImage(img, 0, 0, width, height);
+
+                    canvas.toBlob((blob) => {
+                        const compressedFile = new File([blob], file.name, {
+                            type: 'image/jpeg',
+                            lastModified: Date.now()
+                        });
+                        resolve(compressedFile);
+                    }, 'image/jpeg', 0.7);
+                }
+            };
+        });
+    }
+
+    // Attach compression to file inputs
+    const photoInputs = document.querySelectorAll('input[type="file"][accept="image/*"]');
+    photoInputs.forEach(input => {
+        input.addEventListener('change', async function(e) {
+            if (!this.files || this.files.length === 0) return;
+            
+            const dataTransfer = new DataTransfer();
+            let hasLargeFile = false;
+            
+            for (let i = 0; i < this.files.length; i++) {
+                const file = this.files[i];
+                if (file.size > 1024 * 1024) { // Compress if larger than 1MB
+                    hasLargeFile = true;
+                    // Tampilkan loading state jika ada elemen yang sesuai (opsional)
+                    const compressedFile = await compressImage(file);
+                    dataTransfer.items.add(compressedFile);
+                } else {
+                    dataTransfer.items.add(file);
+                }
+            }
+            
+            if (hasLargeFile) {
+                this.files = dataTransfer.files;
+                if (typeof updateFileNames === 'function' && this.id === 'file-upload') {
+                    updateFileNames(this);
+                }
+            }
+        });
+    });
 </script>
 @endpush
