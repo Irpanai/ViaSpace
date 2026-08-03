@@ -94,8 +94,44 @@
                         @foreach($daySchedules as $schedule)
                             @php
                                 $isMe = $schedule->user_id == auth()->id();
+                                $attKey = $currentDateStr . '_' . $schedule->user_id;
+                                $att = $attendances->get($attKey);
+                                
+                                $bgColor = 'bg-gray-50';
+                                $borderColor = 'border-gray-100';
+                                $textColor = 'text-gray-600';
+                                $hoverColor = 'hover:bg-gray-100';
+                                $titleStatus = 'Belum Absen';
+
+                                if ($att) {
+                                    if ($att->status == 'present') {
+                                        $bgColor = 'bg-green-50'; $borderColor = 'border-green-200'; $textColor = 'text-green-700'; $hoverColor = 'hover:bg-green-100'; $titleStatus = 'Hadir';
+                                    } elseif ($att->status == 'late') {
+                                        $bgColor = 'bg-orange-50'; $borderColor = 'border-orange-200'; $textColor = 'text-orange-700'; $hoverColor = 'hover:bg-orange-100'; $titleStatus = 'Terlambat';
+                                    } elseif ($att->status == 'sakit' || $att->status == 'sick') {
+                                        $bgColor = 'bg-red-50'; $borderColor = 'border-red-200'; $textColor = 'text-red-700'; $hoverColor = 'hover:bg-red-100'; $titleStatus = 'Sakit';
+                                    } elseif ($att->status == 'izin' || $att->status == 'permit') {
+                                        $bgColor = 'bg-blue-50'; $borderColor = 'border-blue-200'; $textColor = 'text-blue-700'; $hoverColor = 'hover:bg-blue-100'; $titleStatus = 'Izin';
+                                    } elseif ($att->status == 'alpha') {
+                                        $bgColor = 'bg-gray-200'; $borderColor = 'border-gray-300'; $textColor = 'text-gray-800'; $hoverColor = 'hover:bg-gray-300'; $titleStatus = 'Alpha';
+                                    }
+                                } elseif (\Carbon\Carbon::parse($currentDateStr)->isBefore(\Carbon\Carbon::today())) {
+                                    $bgColor = 'bg-gray-200'; $borderColor = 'border-gray-300'; $textColor = 'text-gray-800'; $hoverColor = 'hover:bg-gray-300'; $titleStatus = 'Alpha (Tidak Hadir)';
+                                }
+                                
+                                // Jika ini adalah jadwal pengguna sendiri, kita tetap pertahankan ring/border yang mencolok namun pakai warna status
+                                if ($isMe) {
+                                    $borderColor = 'border-gray-500 ring-1 ring-gray-400';
+                                    if ($att) {
+                                        if ($att->status == 'present') { $borderColor = 'border-green-400 ring-1 ring-green-300'; }
+                                        elseif ($att->status == 'late') { $borderColor = 'border-orange-400 ring-1 ring-orange-300'; }
+                                        elseif ($att->status == 'sakit' || $att->status == 'sick') { $borderColor = 'border-red-400 ring-1 ring-red-300'; }
+                                        elseif ($att->status == 'izin' || $att->status == 'permit') { $borderColor = 'border-blue-400 ring-1 ring-blue-300'; }
+                                        elseif ($att->status == 'alpha') { $borderColor = 'border-gray-400 ring-1 ring-gray-300'; }
+                                    }
+                                }
                             @endphp
-                            <div class="flex items-center gap-1.5 px-2 py-1 rounded-full {{ $isMe ? 'bg-orange-100/80 border border-orange-200/50 ring-1 ring-orange-500/10' : 'bg-gray-50 border border-gray-100 hover:bg-gray-100' }} transition-colors" title="{{ $schedule->user->name }}">
+                            <div class="flex items-center gap-1.5 px-2 py-1 rounded-full {{ $bgColor }} border {{ $borderColor }} {{ $hoverColor }} transition-colors" title="{{ $schedule->user->name }} ({{ $titleStatus }})">
                                 <!-- Avatar Mini -->
                                 <div class="w-4 h-4 md:w-5 md:h-5 rounded-full flex-shrink-0 bg-white flex items-center justify-center text-[9px] font-bold text-gray-600 overflow-hidden shadow-sm border border-gray-100">
                                     @if($schedule->user->avatar)
@@ -105,7 +141,7 @@
                                     @endif
                                 </div>
                                 <!-- Nama -->
-                                <span class="text-[9px] md:text-[10px] font-semibold truncate {{ $isMe ? 'text-orange-700' : 'text-gray-600' }}">
+                                <span class="text-[9px] md:text-[10px] font-semibold truncate {{ $textColor }}">
                                     {{ $schedule->user->nickname ? $schedule->user->nickname : explode(' ', trim($schedule->user->name))[0] }}
                                 </span>
                             </div>

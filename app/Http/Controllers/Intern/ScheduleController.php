@@ -26,6 +26,14 @@ class ScheduleController extends Controller
             ->whereBetween('date', [$startOfMonth->format('Y-m-d'), $endOfMonth->format('Y-m-d')])
             ->get();
 
+        // Mengambil absensi untuk mewarnai kalender
+        $attendances = \App\Models\Attendance::whereMonth('date', $month)
+            ->whereYear('date', $year)
+            ->get()
+            ->keyBy(function ($item) {
+                return Carbon::parse($item->date)->format('Y-m-d') . '_' . $item->user_id;
+            });
+
         // Mengelompokkan jadwal berdasarkan tanggal
         // Hasilnya: ['2023-10-01' => [Schedule1, Schedule2], '2023-10-02' => [...]]
         $schedulesByDate = $schedules->groupBy(function ($schedule) {
@@ -58,6 +66,7 @@ class ScheduleController extends Controller
             'year', 
             'date', 
             'schedulesByDate', 
+            'attendances',
             'daysInMonth', 
             'firstDayOfWeek',
             'mySchedulesThisMonth',
