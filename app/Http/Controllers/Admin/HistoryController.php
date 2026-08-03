@@ -33,4 +33,25 @@ class HistoryController extends Controller
 
         return view('admin.history', compact('attendances', 'interns'));
     }
+
+    public function storeLeave(Request $request)
+    {
+        $request->validate([
+            'user_id' => 'required|exists:users,id',
+            'date' => 'required|date',
+            'status' => 'required|in:izin,sakit',
+            'leave_reason' => 'required|string',
+        ]);
+
+        // Create or update attendance for that date
+        Attendance::updateOrCreate(
+            ['user_id' => $request->user_id, 'date' => $request->date],
+            [
+                'status' => $request->status,
+                'leave_reason' => $request->leave_reason,
+            ]
+        );
+
+        return redirect()->back()->with('success', 'Berhasil mencatat absensi ' . ucfirst($request->status) . ' secara manual.');
+    }
 }

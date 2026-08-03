@@ -24,6 +24,7 @@ Route::prefix('admin')->name('admin.')->middleware(['auth'])->group(function () 
     Route::get('/calendar', [\App\Http\Controllers\Admin\CalendarController::class, 'index'])->name('calendar');
     // History
     Route::get('/history', [\App\Http\Controllers\Admin\HistoryController::class, 'index'])->name('history');
+    Route::post('/history/leave', [\App\Http\Controllers\Admin\HistoryController::class, 'storeLeave'])->name('history.leave');
 
     // Interns
     Route::get('/interns', [\App\Http\Controllers\Admin\InternController::class, 'index'])->name('interns.index');

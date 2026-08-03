@@ -9,6 +9,10 @@
             <h2 class="text-xl font-bold text-gray-800 tracking-tight">Rekam Jejak Logbook</h2>
             <p class="text-gray-500 mt-1 text-sm">Daftar riwayat kehadiran dan laporan logbook seluruh siswa magang.</p>
         </div>
+        <button onclick="document.getElementById('manualLeaveModal').classList.remove('hidden')" class="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-medium py-2 px-4 rounded-xl shadow-lg shadow-blue-500/30 transition-all flex items-center gap-2 text-sm">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+            Input Izin Manual
+        </button>
     </div>
 
     <!-- Filter Form -->
@@ -225,6 +229,60 @@
         
         <div class="p-6 border-t border-gray-100 bg-gray-50 flex justify-end">
             <button onclick="document.getElementById('detailModal').classList.add('hidden')" class="px-8 py-3 bg-gray-900 text-white font-semibold rounded-xl hover:bg-black transition-all shadow-md hover:shadow-lg transform hover:-translate-y-0.5">Tutup Jendela</button>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Input Izin Manual -->
+<div id="manualLeaveModal" class="fixed inset-0 bg-black/50 hidden z-50 flex items-center justify-center">
+    <div class="bg-white rounded-2xl shadow-xl w-full max-w-md mx-4 overflow-hidden transform transition-all">
+        <div class="p-6 border-b border-gray-100 flex justify-between items-center bg-gray-50/50">
+            <h3 class="text-xl font-bold text-gray-800">Input Izin / Sakit Manual</h3>
+            <button onclick="document.getElementById('manualLeaveModal').classList.add('hidden')" class="text-gray-400 hover:text-gray-600 transition-colors">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+            </button>
+        </div>
+        
+        <div class="p-6">
+            <form action="{{ route('history.leave') }}" method="POST">
+                @csrf
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-1">Siswa</label>
+                        <select name="user_id" required class="w-full border border-gray-200 rounded-xl shadow-sm focus:bg-white focus:border-orange-500 focus:ring-orange-500 p-3 bg-gray-50 transition-colors">
+                            <option value="">Pilih Siswa...</option>
+                            @foreach($interns as $intern)
+                                <option value="{{ $intern->id }}">{{ $intern->name }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-1">Tanggal</label>
+                        <input type="date" name="date" required value="{{ now()->format('Y-m-d') }}" class="w-full border border-gray-200 rounded-xl shadow-sm focus:bg-white focus:border-orange-500 focus:ring-orange-500 p-3 bg-gray-50 transition-colors">
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-1">Tipe Izin</label>
+                        <select name="status" required class="w-full border border-gray-200 rounded-xl shadow-sm focus:bg-white focus:border-orange-500 focus:ring-orange-500 p-3 bg-gray-50 transition-colors">
+                            <option value="sakit">Sakit</option>
+                            <option value="izin">Izin</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-1">Keterangan / Alasan</label>
+                        <textarea name="leave_reason" rows="3" required placeholder="Contoh: Mengikuti acara keluarga, atau surat menyusul..." class="w-full border border-gray-200 rounded-xl shadow-sm focus:bg-white focus:border-orange-500 focus:ring-orange-500 p-3 bg-gray-50 transition-colors"></textarea>
+                    </div>
+                </div>
+
+                <div class="mt-8 flex justify-end gap-3">
+                    <button type="button" onclick="document.getElementById('manualLeaveModal').classList.add('hidden')" class="px-5 py-2.5 text-gray-600 font-medium hover:bg-gray-100 rounded-xl transition-colors">Batal</button>
+                    <button type="submit" class="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-medium py-2.5 px-6 rounded-xl shadow-md transition-all transform hover:-translate-y-0.5">
+                        Simpan Absensi
+                    </button>
+                </div>
+            </form>
         </div>
     </div>
 </div>
