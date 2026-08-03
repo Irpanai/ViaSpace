@@ -16,7 +16,7 @@ class DashboardController extends Controller
     {
         $today = now()->format('Y-m-d');
         
-        $presentToday = Attendance::where('date', $today)->count();
+        $presentToday = Attendance::where('date', $today)->whereIn('status', ['present', 'late'])->count();
         $scheduledToday = Schedule::where('date', $today)->count();
 
         // Get all interns

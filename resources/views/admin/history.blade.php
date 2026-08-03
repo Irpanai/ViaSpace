@@ -102,11 +102,11 @@
                                     <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-green-100 text-green-700">
                                         <span class="w-1.5 h-1.5 rounded-full bg-green-500"></span> Hadir
                                     </span>
-                                @elseif($att->status == 'sick')
+                                @elseif($att->status == 'sick' || $att->status == 'sakit')
                                     <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-red-100 text-red-700">
                                         <span class="w-1.5 h-1.5 rounded-full bg-red-500"></span> Sakit
                                     </span>
-                                @elseif($att->status == 'permit')
+                                @elseif($att->status == 'permit' || $att->status == 'izin')
                                     <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-blue-100 text-blue-700">
                                         <span class="w-1.5 h-1.5 rounded-full bg-blue-500"></span> Izin
                                     </span>
@@ -128,7 +128,9 @@
                                     'status' => $att->status,
                                     'logbook' => $att->logbook,
                                     'photo_path' => $att->photo_path ? Storage::url($att->photo_path) : null,
-                                    'check_out_photo_path' => $att->check_out_photo_path ? Storage::url($att->check_out_photo_path) : null
+                                    'check_out_photo_path' => $att->check_out_photo_path ? Storage::url($att->check_out_photo_path) : null,
+                                    'leave_reason' => $att->leave_reason,
+                                    'leave_proof_path' => $att->leave_proof_path ? Storage::url($att->leave_proof_path) : null
                                 ]) }})" class="inline-flex items-center gap-2 px-3 py-1.5 bg-orange-50 text-orange-600 rounded-lg hover:bg-orange-100 transition-colors text-sm font-medium border border-orange-100">
                                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
                                     Detail
@@ -253,8 +255,8 @@
         let statusBadge = '';
         if(data.status === 'present') statusBadge = 'Hadir';
         else if(data.status === 'late') statusBadge = 'Terlambat';
-        else if(data.status === 'sick') statusBadge = 'Sakit';
-        else if(data.status === 'permit') statusBadge = 'Izin';
+        else if(data.status === 'sick' || data.status === 'sakit') statusBadge = 'Sakit';
+        else if(data.status === 'permit' || data.status === 'izin') statusBadge = 'Izin';
         else statusBadge = 'Alpa';
         document.getElementById('modalStatus').textContent = statusBadge;
 
@@ -277,9 +279,25 @@
             document.getElementById('modalPhotoOutContainer').classList.add('hidden');
         }
 
-        // Handle Logbook
+        // Handle Logbook / Leave Proof
         let logbookHtml = '';
-        if (data.logbook) {
+        if (data.status === 'izin' || data.status === 'sakit' || data.status === 'sick' || data.status === 'permit') {
+            logbookHtml += `
+                <div class="mb-4">
+                    <div class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1">Alasan ${statusBadge}</div>
+                    <div class="text-gray-700 leading-relaxed whitespace-pre-wrap break-words">${data.leave_reason || '-'}</div>
+                </div>
+            `;
+            if (data.leave_proof_path) {
+                logbookHtml += `
+                <div>
+                    <div class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Surat Bukti</div>
+                    <a href="${data.leave_proof_path}" target="_blank" class="block w-full">
+                        <img src="${data.leave_proof_path}" class="w-full h-48 object-cover rounded-lg border border-gray-200 hover:opacity-80 transition" alt="Surat Bukti">
+                    </a>
+                </div>`;
+            }
+        } else if (data.logbook) {
             logbookHtml += `
                 <div class="mb-4">
                     <div class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1">Kategori Pekerjaan</div>

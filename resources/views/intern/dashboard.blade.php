@@ -62,15 +62,27 @@
 
         <div class="p-8 grid grid-cols-1 md:grid-cols-2 gap-8">
             
-            <!-- Check-In Section -->
+            <!-- Presensi & Izin Section -->
             <div class="space-y-6">
-                <div class="flex items-center gap-3 mb-2">
-                    <div class="w-8 h-8 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center font-bold">1</div>
-                    <h3 class="text-lg font-semibold text-gray-800">Check-In</h3>
+                <div class="flex items-center justify-between mb-2">
+                    <div class="flex items-center gap-3">
+                        <div class="w-8 h-8 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center font-bold">1</div>
+                        <h3 class="text-lg font-semibold text-gray-800">Kehadiran Hari Ini</h3>
+                    </div>
                 </div>
 
                 <div class="bg-gray-50 rounded-2xl p-6 border border-gray-100 flex flex-col justify-center">
-                    @if($attendance && $attendance->check_in_time)
+                    @if($attendance && in_array($attendance->status, ['izin', 'sakit']))
+                        <div class="text-center py-4 mb-4">
+                            <div class="w-16 h-16 bg-blue-100 text-blue-500 rounded-full flex items-center justify-center mx-auto mb-3">
+                                <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                            </div>
+                            <p class="text-gray-800 font-medium">Anda sedang {{ ucfirst($attendance->status) }} hari ini.</p>
+                            @if($attendance->leave_reason)
+                                <p class="text-sm text-gray-500 mt-2 italic">"{{ $attendance->leave_reason }}"</p>
+                            @endif
+                        </div>
+                    @elseif($attendance && $attendance->check_in_time)
                         <div class="text-center py-4 mb-4">
                             @if($attendance->status === 'late')
                                 <div class="w-16 h-16 bg-orange-100 text-orange-500 rounded-full flex items-center justify-center mx-auto mb-3">
@@ -100,6 +112,13 @@
                             </div>
                         @endif
                     @else
+                        <!-- Form Selection -->
+                        <div class="flex gap-2 mb-6 bg-gray-200/50 p-1 rounded-xl">
+                            <button type="button" id="tabHadir" onclick="switchTab('hadir')" class="flex-1 py-2 text-sm font-semibold rounded-lg bg-white text-gray-800 shadow-sm transition-all">Hadir</button>
+                            <button type="button" id="tabIzin" onclick="switchTab('izin')" class="flex-1 py-2 text-sm font-semibold rounded-lg text-gray-500 hover:text-gray-700 transition-all">Izin / Sakit</button>
+                        </div>
+
+                        <!-- Form Check-In -->
                         <form action="{{ route('intern.checkin') }}" method="POST" id="checkInForm" enctype="multipart/form-data">
                             @csrf
                             <input type="hidden" name="lat" id="lat">
@@ -125,6 +144,36 @@
                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.242-4.243a8 8 0 1111.314 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
                                 Ambil Lokasi & Check-In
                             </button>
+                        </form>
+
+                        <!-- Form Izin -->
+                        <form action="{{ route('intern.leave') }}" method="POST" id="leaveForm" enctype="multipart/form-data" class="hidden">
+                            @csrf
+                            <div class="space-y-4">
+                                <div>
+                                    <label class="block text-sm font-semibold text-gray-700 mb-1">Tipe</label>
+                                    <select name="leave_type" required class="w-full border border-gray-200 rounded-xl shadow-sm p-3 bg-white focus:ring-orange-500 focus:border-orange-500 transition-colors">
+                                        <option value="">Pilih Izin/Sakit...</option>
+                                        <option value="sakit">Sakit (Butuh Surat Dokter)</option>
+                                        <option value="izin">Izin Kategori Lain</option>
+                                    </select>
+                                </div>
+                                
+                                <div>
+                                    <label class="block text-sm font-semibold text-gray-700 mb-1">Keterangan / Alasan</label>
+                                    <textarea name="leave_reason" rows="3" required placeholder="Jelaskan alasan izin secara detail..." class="w-full border border-gray-200 rounded-xl shadow-sm focus:bg-white focus:border-orange-500 focus:ring-orange-500 p-3 bg-gray-50 transition-colors"></textarea>
+                                </div>
+
+                                <div>
+                                    <label class="block text-sm font-semibold text-gray-700 mb-1">Surat Bukti (Wajib)</label>
+                                    <input type="file" name="leave_proof" accept="image/*,.pdf" required class="w-full border border-gray-200 rounded-xl shadow-sm bg-white focus:ring-orange-500 focus:border-orange-500 p-2 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-gray-50 file:text-gray-600 hover:file:bg-gray-100 transition-colors">
+                                </div>
+
+                                <button type="submit" class="w-full mt-4 bg-gray-900 hover:bg-black text-white font-medium py-3 px-4 rounded-xl transition-all duration-300 flex items-center justify-center gap-2 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path></svg>
+                                    Kirim Pengajuan
+                                </button>
+                            </div>
                         </form>
                     @endif
                 </div>
@@ -676,5 +725,25 @@
             }
         });
     });
+
+    // Tab Switcher for Hadir / Izin
+    function switchTab(tab) {
+        const tabHadir = document.getElementById('tabHadir');
+        const tabIzin = document.getElementById('tabIzin');
+        const checkInForm = document.getElementById('checkInForm');
+        const leaveForm = document.getElementById('leaveForm');
+
+        if (tab === 'hadir') {
+            tabHadir.className = "flex-1 py-2 text-sm font-semibold rounded-lg bg-white text-gray-800 shadow-sm transition-all";
+            tabIzin.className = "flex-1 py-2 text-sm font-semibold rounded-lg text-gray-500 hover:text-gray-700 transition-all";
+            checkInForm.classList.remove('hidden');
+            leaveForm.classList.add('hidden');
+        } else {
+            tabIzin.className = "flex-1 py-2 text-sm font-semibold rounded-lg bg-white text-gray-800 shadow-sm transition-all";
+            tabHadir.className = "flex-1 py-2 text-sm font-semibold rounded-lg text-gray-500 hover:text-gray-700 transition-all";
+            leaveForm.classList.remove('hidden');
+            checkInForm.classList.add('hidden');
+        }
+    }
 </script>
 @endpush

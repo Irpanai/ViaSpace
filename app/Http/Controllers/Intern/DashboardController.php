@@ -43,15 +43,55 @@ class DashboardController extends Controller
         $endTime = Setting::where('key', 'shift_end_time')->value('value') ?? '17:00';
 
         // Statistics
-        $totalHadir = Attendance::where('user_id', $user->id)->where('status', 'present')->count();
-        $totalIzin = 0; // Future implementation
-        $totalSakit = 0; // Future implementation
+        $totalHadir = Attendance::where('user_id', $user->id)->whereIn('status', ['present', 'late'])->count();
+        $totalIzin = Attendance::where('user_id', $user->id)->where('status', 'izin')->count();
+        $totalSakit = Attendance::where('user_id', $user->id)->where('status', 'sakit')->count();
 
         $officePolygon = Setting::where('key', 'office_polygon')->value('value') ?? '[]';
         $officeLat = Setting::where('key', 'office_lat')->value('value') ?? '-3.277524';
         $officeLng = Setting::where('key', 'office_lng')->value('value') ?? '114.600035';
 
         return view('intern.dashboard', compact('hasSchedule', 'attendance', 'today', 'startTime', 'endTime', 'totalHadir', 'totalIzin', 'totalSakit', 'officePolygon', 'officeLat', 'officeLng'));
+    }
+
+    public function submitLeave(Request $request)
+    {
+        $request->validate([
+            'leave_type' => 'required|in:izin,sakit',
+            'leave_reason' => 'required|string|min:10',
+            'leave_proof' => 'required|file|mimes:jpeg,png,jpg,pdf|max:5120',
+        ], [
+            'leave_proof.uploaded' => 'Gagal mengunggah surat keterangan. Ukuran file terlalu besar, maksimal 5MB.',
+        ]);
+
+        $user = Auth::user();
+        if (!$user) {
+            return redirect()->route('login');
+        }
+
+        $today = Carbon::today()->format('Y-m-d');
+
+        // Check if there's already an attendance record today
+        $attendance = Attendance::where('user_id', $user->id)
+            ->where('date', $today)
+            ->first();
+
+        if ($attendance && $attendance->check_in_time) {
+            return redirect()->back()->with('error', 'Anda sudah melakukan Check-In hari ini.');
+        }
+
+        $proofPath = $request->file('leave_proof')->store('leaves', 'public');
+
+        Attendance::updateOrCreate(
+            ['user_id' => $user->id, 'date' => $today],
+            [
+                'status' => $request->leave_type,
+                'leave_reason' => $request->leave_reason,
+                'leave_proof_path' => $proofPath,
+            ]
+        );
+
+        return redirect()->back()->with('success', 'Berhasil mengajukan ' . ucfirst($request->leave_type) . ' untuk hari ini.');
     }
 
     public function checkIn(Request $request)

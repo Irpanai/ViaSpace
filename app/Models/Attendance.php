@@ -18,6 +18,8 @@ class Attendance extends Model
         'photo_path',
         'check_out_photo_path',
         'status',
+        'leave_reason',
+        'leave_proof_path',
     ];
 
     protected $casts = [
