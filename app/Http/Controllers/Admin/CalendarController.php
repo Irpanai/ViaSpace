@@ -23,6 +23,14 @@ class CalendarController extends Controller
             ->whereYear('date', $year)
             ->get();
 
+        // Ambil absensi bulan ini untuk memberikan warna pada jadwal
+        $attendances = \App\Models\Attendance::whereMonth('date', $month)
+            ->whereYear('date', $year)
+            ->get()
+            ->keyBy(function ($item) {
+                return Carbon::parse($item->date)->format('Y-m-d') . '_' . $item->user_id;
+            });
+
         // Hitung total jadwal bulan ini
         $totalSchedulesThisMonth = $schedules->count();
 
@@ -49,7 +57,7 @@ class CalendarController extends Controller
         $firstDayOfWeek = $startOfMonth->dayOfWeekIso; // 1 (Mon) - 7 (Sun)
         $emptyCells = $firstDayOfWeek - 1;
 
-        return view('admin.calendar', compact('schedulesByDate', 'schedules', 'daysInMonth', 'emptyCells', 'firstDayOfWeek', 'date', 'month', 'year', 'totalSchedulesThisMonth', 'totalSchedulesThisWeek'));
+        return view('admin.calendar', compact('schedulesByDate', 'schedules', 'attendances', 'daysInMonth', 'emptyCells', 'firstDayOfWeek', 'date', 'month', 'year', 'totalSchedulesThisMonth', 'totalSchedulesThisWeek'));
     }
 
     public function sendReminder()

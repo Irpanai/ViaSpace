@@ -120,7 +120,32 @@
                 <!-- Daftar Siswa Masuk -->
                 <div class="flex-1 overflow-y-auto custom-scrollbar flex flex-wrap gap-1.5 items-start content-start">
                     @foreach($daySchedules as $schedule)
-                        <div class="flex items-center gap-1.5 px-2 py-1 rounded-full bg-gray-50 border border-gray-100 hover:bg-gray-100 transition-colors" title="{{ $schedule->user->name }}">
+                        @php
+                            $attKey = $currentDateStr . '_' . $schedule->user_id;
+                            $att = $attendances->get($attKey);
+                            $bgColor = 'bg-gray-50';
+                            $borderColor = 'border-gray-100';
+                            $textColor = 'text-gray-600';
+                            $hoverColor = 'hover:bg-gray-100';
+                            $titleStatus = 'Belum Absen';
+
+                            if ($att) {
+                                if ($att->status == 'present') {
+                                    $bgColor = 'bg-green-50'; $borderColor = 'border-green-200'; $textColor = 'text-green-700'; $hoverColor = 'hover:bg-green-100'; $titleStatus = 'Hadir';
+                                } elseif ($att->status == 'late') {
+                                    $bgColor = 'bg-orange-50'; $borderColor = 'border-orange-200'; $textColor = 'text-orange-700'; $hoverColor = 'hover:bg-orange-100'; $titleStatus = 'Terlambat';
+                                } elseif ($att->status == 'sakit' || $att->status == 'sick') {
+                                    $bgColor = 'bg-red-50'; $borderColor = 'border-red-200'; $textColor = 'text-red-700'; $hoverColor = 'hover:bg-red-100'; $titleStatus = 'Sakit';
+                                } elseif ($att->status == 'izin' || $att->status == 'permit') {
+                                    $bgColor = 'bg-blue-50'; $borderColor = 'border-blue-200'; $textColor = 'text-blue-700'; $hoverColor = 'hover:bg-blue-100'; $titleStatus = 'Izin';
+                                } elseif ($att->status == 'alpha') {
+                                    $bgColor = 'bg-gray-200'; $borderColor = 'border-gray-300'; $textColor = 'text-gray-800'; $hoverColor = 'hover:bg-gray-300'; $titleStatus = 'Alpha';
+                                }
+                            } elseif (\Carbon\Carbon::parse($currentDateStr)->isBefore(\Carbon\Carbon::today())) {
+                                $bgColor = 'bg-gray-200'; $borderColor = 'border-gray-300'; $textColor = 'text-gray-800'; $hoverColor = 'hover:bg-gray-300'; $titleStatus = 'Alpha (Tidak Hadir)';
+                            }
+                        @endphp
+                        <div class="flex items-center gap-1.5 px-2 py-1 rounded-full {{ $bgColor }} border {{ $borderColor }} {{ $hoverColor }} transition-colors" title="{{ $schedule->user->name }} ({{ $titleStatus }})">
                             <!-- Avatar Mini -->
                             <div class="w-4 h-4 md:w-5 md:h-5 rounded-full flex-shrink-0 bg-white flex items-center justify-center text-[9px] font-bold text-gray-600 overflow-hidden shadow-sm border border-gray-100">
                                 @if($schedule->user->avatar)
@@ -130,7 +155,7 @@
                                 @endif
                             </div>
                             <!-- Nama -->
-                            <span class="text-[9px] md:text-[10px] font-semibold truncate text-gray-600">
+                            <span class="text-[9px] md:text-[10px] font-semibold truncate {{ $textColor }}">
                                 {{ $schedule->user->nickname ? $schedule->user->nickname : explode(' ', trim($schedule->user->name))[0] }}
                             </span>
                         </div>
