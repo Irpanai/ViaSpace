@@ -244,7 +244,7 @@
         </div>
         
         <div class="p-6">
-            <form action="{{ route('history.leave') }}" method="POST">
+            <form action="{{ route('admin.history.leave') }}" method="POST">
                 @csrf
                 <div class="space-y-4">
                     <div>
