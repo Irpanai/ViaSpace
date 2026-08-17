@@ -39,19 +39,28 @@ class HistoryController extends Controller
         $request->validate([
             'user_id' => 'required|exists:users,id',
             'date' => 'required|date',
-            'status' => 'required|in:izin,sakit',
+            'status' => 'required|in:izin,sakit,present',
             'leave_reason' => 'required|string',
         ]);
+
+        $data = [
+            'status' => $request->status,
+            'leave_reason' => $request->leave_reason,
+        ];
+
+        // Jika statusnya hadir secara manual, kita bisa set waktu check in secara otomatis agar terekam
+        if ($request->status === 'present') {
+            $data['check_in_time'] = Carbon::parse($request->date)->setTime(8, 0); // Asumsi jam 8 pagi
+            $data['check_out_time'] = Carbon::parse($request->date)->setTime(17, 0); // Asumsi jam 5 sore
+        }
 
         // Create or update attendance for that date
         Attendance::updateOrCreate(
             ['user_id' => $request->user_id, 'date' => $request->date],
-            [
-                'status' => $request->status,
-                'leave_reason' => $request->leave_reason,
-            ]
+            $data
         );
 
-        return redirect()->back()->with('success', 'Berhasil mencatat absensi ' . ucfirst($request->status) . ' secara manual.');
+        $statusText = $request->status === 'present' ? 'Hadir' : ucfirst($request->status);
+        return redirect()->back()->with('success', 'Berhasil mencatat absensi ' . $statusText . ' secara manual.');
     }
 }

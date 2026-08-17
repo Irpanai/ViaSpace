@@ -11,7 +11,7 @@
         </div>
         <button onclick="document.getElementById('manualLeaveModal').classList.remove('hidden')" class="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-medium py-2 px-4 rounded-xl shadow-lg shadow-blue-500/30 transition-all flex items-center gap-2 text-sm">
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
-            Input Izin Manual
+            Input Presensi Manual
         </button>
     </div>
 
@@ -233,11 +233,11 @@
     </div>
 </div>
 
-<!-- Modal Input Izin Manual -->
+<!-- Modal Input Presensi Manual -->
 <div id="manualLeaveModal" class="fixed inset-0 bg-black/50 hidden z-50 flex items-center justify-center">
     <div class="bg-white rounded-2xl shadow-xl w-full max-w-md mx-4 overflow-hidden transform transition-all">
         <div class="p-6 border-b border-gray-100 flex justify-between items-center bg-gray-50/50">
-            <h3 class="text-xl font-bold text-gray-800">Input Izin / Sakit Manual</h3>
+            <h3 class="text-xl font-bold text-gray-800">Input Presensi Manual</h3>
             <button onclick="document.getElementById('manualLeaveModal').classList.add('hidden')" class="text-gray-400 hover:text-gray-600 transition-colors">
                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
             </button>
@@ -263,8 +263,9 @@
                     </div>
                     
                     <div>
-                        <label class="block text-sm font-semibold text-gray-700 mb-1">Tipe Izin</label>
+                        <label class="block text-sm font-semibold text-gray-700 mb-1">Status Kehadiran</label>
                         <select name="status" required class="w-full border border-gray-200 rounded-xl shadow-sm focus:bg-white focus:border-orange-500 focus:ring-orange-500 p-3 bg-gray-50 transition-colors">
+                            <option value="present">Hadir (Dinas Luar, dsb)</option>
                             <option value="sakit">Sakit</option>
                             <option value="izin">Izin</option>
                         </select>
@@ -272,7 +273,8 @@
 
                     <div>
                         <label class="block text-sm font-semibold text-gray-700 mb-1">Keterangan / Alasan</label>
-                        <textarea name="leave_reason" rows="3" required placeholder="Contoh: Mengikuti acara keluarga, atau surat menyusul..." class="w-full border border-gray-200 rounded-xl shadow-sm focus:bg-white focus:border-orange-500 focus:ring-orange-500 p-3 bg-gray-50 transition-colors"></textarea>
+                        <textarea name="leave_reason" rows="3" required placeholder="Contoh: Bertugas ke luar kota, Mengikuti acara keluarga, dsb..." class="w-full border border-gray-200 rounded-xl shadow-sm focus:bg-white focus:border-orange-500 focus:ring-orange-500 p-3 bg-gray-50 transition-colors"></textarea>
+                        <p class="text-xs text-gray-500 mt-1">Keterangan ini akan tampil di detail logbook siswa.</p>
                     </div>
                 </div>
 
