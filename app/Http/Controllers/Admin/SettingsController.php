@@ -123,6 +123,20 @@ class SettingsController extends Controller
             foreach ($interns as $intern) {
                 $shiftCounts[$intern->id] = 0;
             }
+            $internIds = array_keys($shiftCounts);
+
+            // Tentukan pemegang kunci awal dari jadwal bulan sebelumnya
+            $keyHolder = null;
+            $lastDate = Schedule::whereDate('date', '<', $date->format('Y-m-d'))->max('date');
+            if ($lastDate) {
+                $lastDayInterns = Schedule::where('date', $lastDate)->pluck('user_id')->toArray();
+                foreach ($lastDayInterns as $id) {
+                    if (in_array($id, $internIds)) {
+                        $keyHolder = $id;
+                        break;
+                    }
+                }
+            }
 
             $newSchedules = [];
 
@@ -133,19 +147,36 @@ class SettingsController extends Controller
                 $quotaToday = $quotas[$dayOfWeek];
                 
                 if ($quotaToday > 0) {
-                    // Sort interns by lowest shift count first, then random (to prevent predictable patterns)
-                    $internIds = array_keys($shiftCounts);
-                    usort($internIds, function($a, $b) use ($shiftCounts) {
-                        if ($shiftCounts[$a] == $shiftCounts[$b]) {
-                            return rand(-1, 1);
+                    $selectedInternIds = [];
+
+                    // 1. Wajibkan Pemegang Kunci masuk hari ini
+                    if ($keyHolder && in_array($keyHolder, $internIds)) {
+                        $selectedInternIds[] = $keyHolder;
+                        $shiftCounts[$keyHolder]++;
+                    }
+
+                    // 2. Isi sisa kuota dengan siswa yang memiliki shift paling sedikit
+                    $remainingQuota = $quotaToday - count($selectedInternIds);
+                    
+                    if ($remainingQuota > 0) {
+                        $availableInterns = array_diff($internIds, $selectedInternIds);
+                        
+                        usort($availableInterns, function($a, $b) use ($shiftCounts) {
+                            if ($shiftCounts[$a] == $shiftCounts[$b]) {
+                                return rand(-1, 1);
+                            }
+                            return $shiftCounts[$a] - $shiftCounts[$b];
+                        });
+
+                        $newAssignments = array_slice($availableInterns, 0, $remainingQuota);
+                        
+                        foreach ($newAssignments as $id) {
+                            $selectedInternIds[] = $id;
+                            $shiftCounts[$id]++;
                         }
-                        return $shiftCounts[$a] - $shiftCounts[$b];
-                    });
+                    }
 
-                    // Ambil intern sebanyak kuota (jika kuota > jumlah intern, batasi ke jumlah intern)
-                    $take = min($quotaToday, count($internIds));
-                    $selectedInternIds = array_slice($internIds, 0, $take);
-
+                    // Simpan jadwal untuk hari ini
                     foreach ($selectedInternIds as $id) {
                         $newSchedules[] = [
                             'user_id' => $id,
@@ -153,7 +184,19 @@ class SettingsController extends Controller
                             'created_at' => now(),
                             'updated_at' => now(),
                         ];
-                        $shiftCounts[$id]++;
+                    }
+
+                    // 3. Tentukan Pemegang Kunci BARU untuk hari kerja berikutnya
+                    if (count($selectedInternIds) > 1) {
+                        // Pilih selain pemegang kunci saat ini untuk estafet (rotasi)
+                        $candidates = array_values(array_diff($selectedInternIds, [$keyHolder]));
+                        if (count($candidates) > 0) {
+                            // Pilih yang shiftnya paling sedikit dari kandidat, atau acak
+                            $keyHolder = $candidates[0];
+                        }
+                    } else if (count($selectedInternIds) == 1) {
+                        // Jika kuota cuma 1, orang ini terpaksa memegang kunci lagi
+                        $keyHolder = $selectedInternIds[0];
                     }
                 }
             }
