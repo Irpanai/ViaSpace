@@ -97,6 +97,15 @@
                                             <div class="text-xs text-gray-500 line-clamp-2 mt-0.5" title="{{ $att->logbook->description }}">{{ $att->logbook->description }}</div>
                                         </div>
                                     </div>
+                                @elseif($att->leave_reason)
+                                    <div class="flex items-start gap-3">
+                                        <div>
+                                            <div class="text-sm font-bold text-gray-800">
+                                                {{ $att->status === 'present' ? 'Presensi Manual' : ucfirst($att->status) }}
+                                            </div>
+                                            <div class="text-xs text-gray-500 line-clamp-2 mt-0.5" title="{{ $att->leave_reason }}">{{ $att->leave_reason }}</div>
+                                        </div>
+                                    </div>
                                 @else
                                     <span class="text-gray-400 text-sm italic">Belum mengisi logbook</span>
                                 @endif
