@@ -350,10 +350,11 @@
 
         // Handle Logbook / Leave Proof
         let logbookHtml = '';
-        if (data.status === 'izin' || data.status === 'sakit' || data.status === 'sick' || data.status === 'permit') {
+        if (data.status === 'izin' || data.status === 'sakit' || data.status === 'sick' || data.status === 'permit' || (data.status === 'present' && !data.logbook && data.leave_reason)) {
+            let title = (data.status === 'present') ? 'Keterangan Presensi Manual' : `Alasan ${statusBadge}`;
             logbookHtml += `
                 <div class="mb-4">
-                    <div class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1">Alasan ${statusBadge}</div>
+                    <div class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1">${title}</div>
                     <div class="text-gray-700 leading-relaxed whitespace-pre-wrap break-words">${data.leave_reason || '-'}</div>
                 </div>
             `;
