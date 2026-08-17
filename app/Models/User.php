@@ -30,6 +30,7 @@ class User extends Authenticatable
         'nim',
         'school',
         'must_change_password',
+        'is_active',
     ];
 
     public function schedules()
