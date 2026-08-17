@@ -74,6 +74,7 @@
                     $currentDateStr = $year . '-' . str_pad($month, 2, '0', STR_PAD_LEFT) . '-' . str_pad($day, 2, '0', STR_PAD_LEFT);
                     $isToday = $currentDateStr == \Carbon\Carbon::today()->format('Y-m-d');
                     $daySchedules = $schedulesByDate->get($currentDateStr, collect());
+                    $holiday = $holidays->where('date', $currentDateStr)->first();
                 @endphp
                 
                 <div class="min-h-[100px] md:min-h-[140px] p-2 md:p-3 rounded-2xl border {{ $holiday ? 'border-red-200 bg-red-50' : ($isToday ? 'border-orange-300 bg-gradient-to-b from-orange-50/50 to-white shadow-sm ring-1 ring-orange-100' : 'border-gray-100 hover:border-gray-300 hover:shadow-md transition-all duration-300 bg-white') }} flex flex-col group relative">
