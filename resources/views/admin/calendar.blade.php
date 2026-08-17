@@ -200,7 +200,7 @@
         
         <div class="p-6 overflow-y-auto flex-1">
             <!-- Form Tambah -->
-            <form action="{{ route('holidays.store') }}" method="POST" class="mb-8 p-4 bg-red-50 rounded-xl border border-red-100">
+            <form action="{{ route('admin.holidays.store') }}" method="POST" class="mb-8 p-4 bg-red-50 rounded-xl border border-red-100">
                 @csrf
                 <h4 class="font-bold text-red-800 mb-3 text-sm">Tambah Hari Libur Baru</h4>
                 <div class="space-y-3">
@@ -236,7 +236,7 @@
                                     <div class="text-xs text-gray-500">{{ \Carbon\Carbon::parse($holiday->date)->translatedFormat('l') }}</div>
                                 </div>
                             </div>
-                            <form action="{{ route('holidays.destroy', $holiday->id) }}" method="POST" onsubmit="return confirm('Hapus hari libur ini? Jadwal yang tersembunyi akan muncul kembali.')">
+                            <form action="{{ route('admin.holidays.destroy', $holiday->id) }}" method="POST" onsubmit="return confirm('Hapus hari libur ini? Jadwal yang tersembunyi akan muncul kembali.')">
                                 @csrf
                                 @method('DELETE')
                                 <button type="submit" class="p-2 text-red-500 hover:bg-red-100 rounded-lg transition-colors" title="Hapus">
