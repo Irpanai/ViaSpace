@@ -42,7 +42,9 @@
                             <div>
                                 <div class="font-bold text-gray-900">
                                     {{ $intern->name }}
-                                    @if(!$intern->is_active)
+                                    @if($intern->is_active)
+                                        <span class="ml-2 inline-block px-2 py-0.5 text-[10px] font-bold bg-green-100 text-green-600 rounded-md">AKTIF</span>
+                                    @else
                                         <span class="ml-2 inline-block px-2 py-0.5 text-[10px] font-bold bg-red-100 text-red-600 rounded-md">NONAKTIF</span>
                                     @endif
                                 </div>
