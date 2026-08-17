@@ -38,6 +38,24 @@ class InternController extends Controller
         return redirect()->back()->with('success', "Siswa berhasil ditambahkan. Password default mereka: {$rawPassword}");
     }
 
+    public function resetPassword($id)
+    {
+        $user = User::findOrFail($id);
+
+        if ($user->role !== 'intern') {
+            return redirect()->back()->with('error', 'Hanya akun siswa magang yang dapat direset passwordnya.');
+        }
+
+        $newPassword = Str::random(6);
+
+        $user->update([
+            'password' => Hash::make($newPassword),
+            'must_change_password' => true,
+        ]);
+
+        return redirect()->back()->with('success', "Password untuk {$user->name} berhasil direset. Password baru: {$newPassword}");
+    }
+
     public function destroy($id)
     {
         $user = User::findOrFail($id);

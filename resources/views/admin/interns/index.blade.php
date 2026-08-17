@@ -50,6 +50,12 @@
                     <td class="py-4 px-6 text-sm text-gray-600">{{ $intern->school ?? '-' }}</td>
                     <td class="py-4 px-6 text-sm text-gray-500">{{ $intern->created_at->translatedFormat('d M Y') }}</td>
                     <td class="py-4 px-6 text-right">
+                        <form action="{{ route('admin.interns.resetPassword', $intern->id) }}" method="POST" class="inline-block" onsubmit="return confirm('Apakah Anda yakin ingin mereset password siswa ini? Password baru akan digenerate secara acak.');">
+                            @csrf
+                            <button type="submit" class="p-2 text-blue-500 hover:bg-blue-50 rounded-xl transition-colors" title="Reset Password">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4v-4l5.618-5.618A6 6 0 0115 7h.01"></path></svg>
+                            </button>
+                        </form>
                         <form action="{{ route('admin.interns.destroy', $intern->id) }}" method="POST" class="inline-block" onsubmit="return confirm('Apakah Anda yakin ingin menghapus akun siswa ini? Semua data terkait (jadwal, logbook) juga akan ikut terhapus atau bermasalah.');">
                             @csrf
                             @method('DELETE')

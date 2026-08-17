@@ -57,12 +57,51 @@ class CalendarController extends Controller
         $firstDayOfWeek = $startOfMonth->dayOfWeekIso; // 1 (Mon) - 7 (Sun)
         $emptyCells = $firstDayOfWeek - 1;
 
-        return view('admin.calendar', compact('schedulesByDate', 'schedules', 'attendances', 'daysInMonth', 'emptyCells', 'firstDayOfWeek', 'date', 'month', 'year', 'totalSchedulesThisMonth', 'totalSchedulesThisWeek'));
+        // Ambil data hari libur di bulan ini
+        $holidaysList = \App\Models\Holiday::whereMonth('date', $month)
+            ->whereYear('date', $year)
+            ->orderBy('date')
+            ->get();
+            
+        $holidays = $holidaysList->keyBy(function ($item) {
+            return Carbon::parse($item->date)->format('Y-m-d');
+        });
+
+        return view('admin.calendar', compact('schedulesByDate', 'schedules', 'attendances', 'holidays', 'holidaysList', 'daysInMonth', 'emptyCells', 'firstDayOfWeek', 'date', 'month', 'year', 'totalSchedulesThisMonth', 'totalSchedulesThisWeek'));
+    }
+
+    public function storeHoliday(Request $request)
+    {
+        $request->validate([
+            'date' => 'required|date',
+            'name' => 'required|string|max:255',
+        ]);
+
+        \App\Models\Holiday::updateOrCreate(
+            ['date' => $request->date],
+            ['name' => $request->name, 'is_national' => true]
+        );
+
+        return redirect()->back()->with('success', 'Hari libur berhasil ditambahkan.');
+    }
+
+    public function destroyHoliday($id)
+    {
+        $holiday = \App\Models\Holiday::findOrFail($id);
+        $holiday->delete();
+
+        return redirect()->back()->with('success', 'Hari libur berhasil dihapus.');
     }
 
     public function sendReminder()
     {
         $today = Carbon::today()->format('Y-m-d');
+
+        // Cek apakah hari ini libur
+        $isHoliday = \App\Models\Holiday::where('date', $today)->exists();
+        if ($isHoliday) {
+            return redirect()->back()->with('info', "Hari ini adalah Hari Libur, reminder WhatsApp tidak dikirim.");
+        }
         
         // Cari user yang punya jadwal hari ini
         $schedulesToday = Schedule::with('user')->where('date', $today)->get();

@@ -34,6 +34,14 @@ class ScheduleController extends Controller
                 return Carbon::parse($item->date)->format('Y-m-d') . '_' . $item->user_id;
             });
 
+        // Ambil data hari libur di bulan ini
+        $holidays = \App\Models\Holiday::whereMonth('date', $month)
+            ->whereYear('date', $year)
+            ->get()
+            ->keyBy(function ($item) {
+                return Carbon::parse($item->date)->format('Y-m-d');
+            });
+
         // Mengelompokkan jadwal berdasarkan tanggal
         // Hasilnya: ['2023-10-01' => [Schedule1, Schedule2], '2023-10-02' => [...]]
         $schedulesByDate = $schedules->groupBy(function ($schedule) {
@@ -67,6 +75,7 @@ class ScheduleController extends Controller
             'date', 
             'schedulesByDate', 
             'attendances',
+            'holidays',
             'daysInMonth', 
             'firstDayOfWeek',
             'mySchedulesThisMonth',

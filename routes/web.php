@@ -26,9 +26,14 @@ Route::prefix('admin')->name('admin.')->middleware(['auth'])->group(function () 
     Route::get('/history', [\App\Http\Controllers\Admin\HistoryController::class, 'index'])->name('history');
     Route::post('/history/leave', [\App\Http\Controllers\Admin\HistoryController::class, 'storeLeave'])->name('history.leave');
 
+    // Holidays
+    Route::post('/holidays', [\App\Http\Controllers\Admin\CalendarController::class, 'storeHoliday'])->name('holidays.store');
+    Route::delete('/holidays/{id}', [\App\Http\Controllers\Admin\CalendarController::class, 'destroyHoliday'])->name('holidays.destroy');
+
     // Interns
     Route::get('/interns', [\App\Http\Controllers\Admin\InternController::class, 'index'])->name('interns.index');
     Route::post('/interns', [\App\Http\Controllers\Admin\InternController::class, 'store'])->name('interns.store');
+    Route::post('/interns/{id}/reset-password', [\App\Http\Controllers\Admin\InternController::class, 'resetPassword'])->name('interns.resetPassword');
     Route::delete('/interns/{id}', [\App\Http\Controllers\Admin\InternController::class, 'destroy'])->name('interns.destroy');
     
     // Time Settings

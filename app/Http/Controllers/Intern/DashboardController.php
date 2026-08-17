@@ -51,7 +51,9 @@ class DashboardController extends Controller
         $officeLat = Setting::where('key', 'office_lat')->value('value') ?? '-3.277524';
         $officeLng = Setting::where('key', 'office_lng')->value('value') ?? '114.600035';
 
-        return view('intern.dashboard', compact('hasSchedule', 'attendance', 'today', 'startTime', 'endTime', 'totalHadir', 'totalIzin', 'totalSakit', 'officePolygon', 'officeLat', 'officeLng'));
+        $todayHoliday = \App\Models\Holiday::where('date', $today)->first();
+
+        return view('intern.dashboard', compact('hasSchedule', 'attendance', 'today', 'startTime', 'endTime', 'totalHadir', 'totalIzin', 'totalSakit', 'officePolygon', 'officeLat', 'officeLng', 'todayHoliday'));
     }
 
     public function submitLeave(Request $request)

@@ -111,6 +111,16 @@
                                 <img src="{{ Storage::url($attendance->photo_path) }}" alt="Foto Presensi" class="w-full h-48 object-cover rounded-xl shadow-sm border border-gray-200">
                             </div>
                         @endif
+                    @elseif(isset($todayHoliday) && $todayHoliday)
+                        <!-- State: Holiday -->
+                        <div class="text-center py-6 mb-4 bg-red-50 rounded-2xl border border-red-100 shadow-sm">
+                            <div class="w-16 h-16 bg-red-100 text-red-500 rounded-full flex items-center justify-center mx-auto mb-3 shadow-inner">
+                                <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"></path></svg>
+                            </div>
+                            <h3 class="text-xl font-bold text-red-800 mb-1 tracking-tight">Hari Ini Libur!</h3>
+                            <p class="text-red-700 font-semibold px-4 text-lg">"{{ $todayHoliday->name }}"</p>
+                            <p class="text-sm text-red-600 mt-3 bg-red-100/50 inline-block px-4 py-2 rounded-lg">Anda tidak perlu melakukan Check-In hari ini.</p>
+                        </div>
                     @else
                         <!-- Form Selection -->
                         <div class="flex gap-2 mb-6 bg-gray-200/50 p-1 rounded-xl">
@@ -209,6 +219,10 @@
                                 <img src="{{ Storage::url($attendance->check_out_photo_path) }}" alt="Foto Presensi Pulang" class="w-full h-48 object-cover rounded-xl shadow-sm border border-gray-200">
                             </div>
                         @endif
+                    @elseif(isset($todayHoliday) && $todayHoliday)
+                        <div class="text-center py-6 bg-red-50 rounded-xl border border-red-100 border-dashed">
+                            <p class="text-sm text-red-600 font-medium">Form Logbook & Check-Out ditutup karena hari ini libur.</p>
+                        </div>
                     @else
                         <form action="{{ route('intern.checkout') }}" method="POST" id="checkOutForm" enctype="multipart/form-data">
                             @csrf
