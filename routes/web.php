@@ -34,6 +34,7 @@ Route::prefix('admin')->name('admin.')->middleware(['auth'])->group(function () 
     Route::get('/interns', [\App\Http\Controllers\Admin\InternController::class, 'index'])->name('interns.index');
     Route::post('/interns', [\App\Http\Controllers\Admin\InternController::class, 'store'])->name('interns.store');
     Route::post('/interns/{id}/reset-password', [\App\Http\Controllers\Admin\InternController::class, 'resetPassword'])->name('interns.resetPassword');
+    Route::post('/interns/{id}/toggle-active', [\App\Http\Controllers\Admin\InternController::class, 'toggleActive'])->name('interns.toggleActive');
     Route::delete('/interns/{id}', [\App\Http\Controllers\Admin\InternController::class, 'destroy'])->name('interns.destroy');
     
     // Time Settings

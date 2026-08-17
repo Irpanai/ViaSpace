@@ -110,9 +110,9 @@ class SettingsController extends Controller
             }
 
             // Load intern
-            $interns = User::where('role', 'intern')->get();
+            $interns = User::where('role', 'intern')->where('is_active', true)->get();
             if ($interns->isEmpty()) {
-                return redirect()->back()->with('error', 'Gagal generate: Tidak ada siswa magang yang terdaftar.');
+                return redirect()->back()->with('error', 'Gagal generate: Tidak ada siswa magang yang aktif.');
             }
 
             $date = Carbon::createFromDate($year, $month, 1);

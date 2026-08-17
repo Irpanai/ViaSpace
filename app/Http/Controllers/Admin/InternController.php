@@ -56,6 +56,22 @@ class InternController extends Controller
         return redirect()->back()->with('success', "Password untuk {$user->name} berhasil direset. Password baru: {$newPassword}");
     }
 
+    public function toggleActive($id)
+    {
+        $user = User::findOrFail($id);
+
+        if ($user->role !== 'intern') {
+            return redirect()->back()->with('error', 'Hanya akun siswa magang yang dapat diubah statusnya.');
+        }
+
+        $user->update([
+            'is_active' => !$user->is_active,
+        ]);
+
+        $statusStr = $user->is_active ? 'diaktifkan' : 'dinonaktifkan';
+        return redirect()->back()->with('success', "Status {$user->name} berhasil {$statusStr}.");
+    }
+
     public function destroy($id)
     {
         $user = User::findOrFail($id);

@@ -29,7 +29,7 @@
             </thead>
             <tbody class="divide-y divide-gray-50">
                 @forelse($interns as $intern)
-                <tr class="hover:bg-gray-50/50 transition-colors group">
+                <tr class="hover:bg-gray-50/50 transition-colors group {{ !$intern->is_active ? 'opacity-60 bg-gray-50/50' : '' }}">
                     <td class="py-4 px-6">
                         <div class="flex items-center gap-4">
                             <div class="w-10 h-10 rounded-full bg-gray-100 border border-gray-200 overflow-hidden flex-shrink-0 flex items-center justify-center font-bold text-gray-400">
@@ -40,7 +40,12 @@
                                 @endif
                             </div>
                             <div>
-                                <div class="font-bold text-gray-900">{{ $intern->name }}</div>
+                                <div class="font-bold text-gray-900">
+                                    {{ $intern->name }}
+                                    @if(!$intern->is_active)
+                                        <span class="ml-2 inline-block px-2 py-0.5 text-[10px] font-bold bg-red-100 text-red-600 rounded-md">NONAKTIF</span>
+                                    @endif
+                                </div>
                                 <div class="text-xs text-orange-500 font-medium">{{ $intern->nickname ?? 'Belum ada panggilan' }}</div>
                             </div>
                         </div>
@@ -50,6 +55,16 @@
                     <td class="py-4 px-6 text-sm text-gray-600">{{ $intern->school ?? '-' }}</td>
                     <td class="py-4 px-6 text-sm text-gray-500">{{ $intern->created_at->translatedFormat('d M Y') }}</td>
                     <td class="py-4 px-6 text-right">
+                        <form action="{{ route('admin.interns.toggleActive', $intern->id) }}" method="POST" class="inline-block" onsubmit="return confirm('Apakah Anda yakin ingin {{ $intern->is_active ? 'menonaktifkan' : 'mengaktifkan' }} siswa ini?');">
+                            @csrf
+                            <button type="submit" class="p-2 {{ $intern->is_active ? 'text-orange-500 hover:bg-orange-50' : 'text-green-500 hover:bg-green-50' }} rounded-xl transition-colors" title="{{ $intern->is_active ? 'Nonaktifkan Akun' : 'Aktifkan Akun' }}">
+                                @if($intern->is_active)
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636"></path></svg>
+                                @else
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                                @endif
+                            </button>
+                        </form>
                         <form action="{{ route('admin.interns.resetPassword', $intern->id) }}" method="POST" class="inline-block" onsubmit="return confirm('Apakah Anda yakin ingin mereset password siswa ini? Password baru akan digenerate secara acak.');">
                             @csrf
                             <button type="submit" class="p-2 text-blue-500 hover:bg-blue-50 rounded-xl transition-colors" title="Reset Password">
