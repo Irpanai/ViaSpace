@@ -171,14 +171,14 @@
 </div>
 
 <!-- Modal Detail Logbook -->
-<div id="detailModal" class="fixed inset-0 bg-black/60 backdrop-blur-sm hidden z-50 flex items-center justify-center p-4">
-    <div class="bg-white rounded-3xl shadow-2xl w-full max-w-4xl max-h-[90vh] overflow-hidden flex flex-col transform transition-all">
+<div id="detailModal" class="fixed inset-0 bg-black/60 backdrop-blur-sm hidden z-50 flex items-center justify-center p-4" onclick="closeDetailModal()">
+    <div class="bg-white rounded-3xl shadow-2xl w-full max-w-4xl max-h-[90vh] overflow-hidden flex flex-col transform transition-all" onclick="event.stopPropagation()">
         <div class="p-6 md:p-8 border-b border-gray-100 flex justify-between items-center bg-gradient-to-r from-gray-50 to-white">
             <div>
                 <h3 class="text-2xl font-bold text-gray-900 tracking-tight" id="modalTitle">Detail Rekam Jejak</h3>
                 <p class="text-sm text-gray-500 mt-1">Ringkasan aktivitas absensi dan laporan pekerjaan.</p>
             </div>
-            <button onclick="document.getElementById('detailModal').classList.add('hidden')" class="w-10 h-10 rounded-full bg-gray-100 text-gray-500 hover:bg-gray-200 hover:text-gray-700 flex items-center justify-center transition-colors">
+            <button onclick="closeDetailModal()" class="w-10 h-10 rounded-full bg-gray-100 text-gray-500 hover:bg-gray-200 hover:text-gray-700 flex items-center justify-center transition-colors">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
             </button>
         </div>
@@ -237,7 +237,7 @@
         </div>
         
         <div class="p-6 border-t border-gray-100 bg-gray-50 flex justify-end">
-            <button onclick="document.getElementById('detailModal').classList.add('hidden')" class="px-8 py-3 bg-gray-900 text-white font-semibold rounded-xl hover:bg-black transition-all shadow-md hover:shadow-lg transform hover:-translate-y-0.5">Tutup Jendela</button>
+            <button onclick="closeDetailModal()" class="px-8 py-3 bg-gray-900 text-white font-semibold rounded-xl hover:bg-black transition-all shadow-md hover:shadow-lg transform hover:-translate-y-0.5">Tutup Jendela</button>
         </div>
     </div>
 </div>
@@ -251,11 +251,11 @@
 </div>
 
 <!-- Modal Input Presensi Manual -->
-<div id="manualLeaveModal" class="fixed inset-0 bg-black/50 hidden z-50 flex items-center justify-center">
-    <div class="bg-white rounded-2xl shadow-xl w-full max-w-md mx-4 overflow-hidden transform transition-all">
+<div id="manualLeaveModal" class="fixed inset-0 bg-black/50 hidden z-50 flex items-center justify-center" onclick="closeManualLeaveModal()">
+    <div class="bg-white rounded-2xl shadow-xl w-full max-w-md mx-4 overflow-hidden transform transition-all" onclick="event.stopPropagation()">
         <div class="p-6 border-b border-gray-100 flex justify-between items-center bg-gray-50/50">
             <h3 class="text-xl font-bold text-gray-800">Input Presensi Manual</h3>
-            <button onclick="document.getElementById('manualLeaveModal').classList.add('hidden')" class="text-gray-400 hover:text-gray-600 transition-colors">
+            <button type="button" onclick="closeManualLeaveModal()" class="text-gray-400 hover:text-gray-600 transition-colors">
                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
             </button>
         </div>
@@ -296,7 +296,7 @@
                 </div>
 
                 <div class="mt-8 flex justify-end gap-3">
-                    <button type="button" onclick="document.getElementById('manualLeaveModal').classList.add('hidden')" class="px-5 py-2.5 text-gray-600 font-medium hover:bg-gray-100 rounded-xl transition-colors">Batal</button>
+                    <button type="button" onclick="closeManualLeaveModal()" class="px-5 py-2.5 text-gray-600 font-medium hover:bg-gray-100 rounded-xl transition-colors">Batal</button>
                     <button type="submit" class="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-medium py-2.5 px-6 rounded-xl shadow-md transition-all transform hover:-translate-y-0.5">
                         Simpan Absensi
                     </button>
@@ -427,5 +427,28 @@
     function closeImageModal() {
         document.getElementById('imageModal').classList.add('hidden');
     }
+
+    function closeDetailModal() {
+        document.getElementById('detailModal').classList.add('hidden');
+    }
+
+    function closeManualLeaveModal() {
+        document.getElementById('manualLeaveModal').classList.add('hidden');
+    }
+
+    document.addEventListener('keydown', function(event) {
+        if (event.key === 'Escape') {
+            if (!document.getElementById('imageModal').classList.contains('hidden')) {
+                closeImageModal();
+            } else if (!document.getElementById('detailModal').classList.contains('hidden')) {
+                closeDetailModal();
+            } else {
+                const manualModal = document.getElementById('manualLeaveModal');
+                if (manualModal && !manualModal.classList.contains('hidden')) {
+                    closeManualLeaveModal();
+                }
+            }
+        }
+    });
 </script>
 @endsection
