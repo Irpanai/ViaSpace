@@ -123,7 +123,7 @@
                                 @if($att->logbook)
                                     <div class="flex items-start gap-3">
                                         @if($att->logbook->photo_path)
-                                            <a href="{{ Storage::url($att->logbook->photo_path) }}" target="_blank" class="flex-shrink-0 relative group/img block overflow-hidden rounded-lg">
+                                            <a href="javascript:void(0)" onclick="showImageModal('{{ Storage::url($att->logbook->photo_path) }}')" class="flex-shrink-0 relative group/img block overflow-hidden rounded-lg">
                                                 <img src="{{ Storage::url($att->logbook->photo_path) }}" alt="Bukti" class="w-12 h-12 object-cover border border-gray-200 transition duration-300 group-hover/img:scale-110">
                                                 <div class="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover/img:opacity-100 transition duration-300">
                                                     <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
@@ -269,6 +269,14 @@
     </div>
 </div>
 
+<!-- Modal Image -->
+<div id="imageModal" class="fixed inset-0 bg-black/90 backdrop-blur-sm hidden z-[100] flex items-center justify-center p-4" onclick="closeImageModal()">
+    <button type="button" class="absolute top-4 right-4 md:top-6 md:right-6 w-10 h-10 md:w-12 md:h-12 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center transition-colors backdrop-blur-md" onclick="closeImageModal()">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+    </button>
+    <img id="imageModalContent" src="" class="max-w-full max-h-[90vh] object-contain rounded-xl shadow-2xl" onclick="event.stopPropagation()">
+</div>
+
 <style>
     .custom-scrollbar::-webkit-scrollbar { width: 6px; }
     .custom-scrollbar::-webkit-scrollbar-track { background: #f1f5f9; border-radius: 10px; }
@@ -344,10 +352,10 @@
             // Photos from Logbook
             let photosHtml = '';
             if (data.logbook.photo_path) {
-                photosHtml += `<a href="/storage/${data.logbook.photo_path.replace('public/', '')}" target="_blank"><img src="/storage/${data.logbook.photo_path.replace('public/', '')}" class="w-full h-32 object-cover rounded-lg border border-gray-200 hover:opacity-80 transition"></a>`;
+                photosHtml += `<a href="javascript:void(0)" onclick="showImageModal('/storage/${data.logbook.photo_path.replace('public/', '')}')"><img src="/storage/${data.logbook.photo_path.replace('public/', '')}" class="w-full h-32 object-cover rounded-lg border border-gray-200 hover:opacity-80 transition"></a>`;
             }
             if (data.logbook.photo_path_2) {
-                photosHtml += `<a href="/storage/${data.logbook.photo_path_2.replace('public/', '')}" target="_blank"><img src="/storage/${data.logbook.photo_path_2.replace('public/', '')}" class="w-full h-32 object-cover rounded-lg border border-gray-200 hover:opacity-80 transition"></a>`;
+                photosHtml += `<a href="javascript:void(0)" onclick="showImageModal('/storage/${data.logbook.photo_path_2.replace('public/', '')}')"><img src="/storage/${data.logbook.photo_path_2.replace('public/', '')}" class="w-full h-32 object-cover rounded-lg border border-gray-200 hover:opacity-80 transition"></a>`;
             }
 
             if (photosHtml) {
@@ -363,6 +371,15 @@
         
         document.getElementById('modalLogbookContent').innerHTML = logbookHtml;
         document.getElementById('detailModal').classList.remove('hidden');
+    }
+
+    function showImageModal(src) {
+        document.getElementById('imageModalContent').src = src;
+        document.getElementById('imageModal').classList.remove('hidden');
+    }
+
+    function closeImageModal() {
+        document.getElementById('imageModal').classList.add('hidden');
     }
 </script>
 @endsection
