@@ -560,18 +560,7 @@
         if (linkInput) localStorage.setItem('draft_link', linkInput.value);
     }
 
-    function savePhotosDraft() {
-        if (!db || !fileInput) return;
-        const transaction = db.transaction(['drafts'], 'readwrite');
-        const store = transaction.objectStore('drafts');
-        if (fileInput.files.length > 0) {
-            // Convert FileList to Array to store in IndexedDB
-            const filesArray = Array.from(fileInput.files);
-            store.put(filesArray, 'logbook_photos');
-        } else {
-            store.delete('logbook_photos');
-        }
-    }
+
 
     function loadDraft() {
         if (categorySelect && localStorage.getItem('draft_category')) {
@@ -612,7 +601,6 @@
     if (categorySelect) categorySelect.addEventListener('change', saveDraft);
     if (descInput) descInput.addEventListener('input', saveDraft);
     if (linkInput) linkInput.addEventListener('input', saveDraft);
-    if (fileInput) fileInput.addEventListener('change', savePhotosDraft);
 
     // Clear draft on submit
     if (form) {

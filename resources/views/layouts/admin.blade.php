@@ -88,13 +88,13 @@
         }
     </style>
 </head>
-<body class="bg-gray-50 h-screen text-gray-800 flex overflow-hidden">
+<body class="bg-gray-50 h-[100dvh] text-gray-800 flex overflow-hidden">
 
     <!-- Mobile Overlay -->
     <div id="sidebarOverlay" class="fixed inset-0 bg-black/50 z-40 hidden md:hidden transition-opacity"></div>
 
     <!-- Sidebar -->
-    <aside id="mainSidebar" class="sidebar-transition w-72 bg-gradient-to-b from-gray-900 to-gray-800 shadow-2xl flex-shrink-0 fixed md:sticky inset-y-0 left-0 z-50 md:z-10 transform -translate-x-full md:translate-x-0 flex flex-col h-screen text-white">
+    <aside id="mainSidebar" class="sidebar-transition w-72 bg-gradient-to-b from-gray-900 to-gray-800 shadow-2xl flex-shrink-0 fixed md:sticky inset-y-0 left-0 z-50 md:z-10 transform -translate-x-full md:translate-x-0 flex flex-col h-[100dvh] text-white">
         <div class="h-20 flex items-center px-6 border-b border-gray-700/50 sidebar-icon-container">
             <div class="flex items-center gap-3">
                 <!-- Via Logo Image -->
