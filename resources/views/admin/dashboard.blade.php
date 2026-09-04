@@ -8,6 +8,34 @@
     <p class="text-gray-500">Ringkasan aktivitas magang hari ini, {{ now()->translatedFormat('d F Y') }}.</p>
 </div>
 
+<!-- Top Interns Leaderboard -->
+@if($topInterns->isNotEmpty())
+<div class="mb-8">
+    <div class="flex items-center gap-3 mb-4">
+        <div class="w-10 h-10 bg-yellow-100 text-yellow-600 rounded-xl flex items-center justify-center shadow-inner">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"></path></svg>
+        </div>
+        <h2 class="text-xl font-bold text-gray-800 tracking-tight">Top Interns of the Month</h2>
+    </div>
+    <div class="grid grid-cols-2 md:grid-cols-5 gap-4">
+        @foreach($topInterns as $index => $topIntern)
+        <div class="glass-panel rounded-2xl p-4 flex flex-col items-center text-center relative overflow-hidden group hover:shadow-lg transition-all {{ $index === 0 ? 'border-2 border-yellow-400/50 bg-gradient-to-b from-yellow-50/50 to-white' : '' }}">
+            @if($index === 0)
+                <div class="absolute -top-3 -right-3 w-10 h-10 bg-yellow-400 rotate-45"></div>
+                <svg class="absolute top-1 right-1 w-4 h-4 text-white z-10" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path></svg>
+            @endif
+            
+            <div class="w-14 h-14 rounded-full bg-gray-100 flex items-center justify-center font-bold text-xl text-gray-600 mb-2 border-2 border-white shadow-sm ring-2 {{ $index === 0 ? 'ring-yellow-400' : 'ring-gray-100 group-hover:ring-orange-300' }} transition-all">
+                {{ substr($topIntern->name, 0, 1) }}
+            </div>
+            <div class="font-bold text-gray-800 text-sm w-full truncate">{{ $topIntern->name }}</div>
+            <div class="text-xs font-semibold {{ $index === 0 ? 'text-yellow-600' : 'text-orange-500' }} mt-1 bg-white/60 px-2 py-0.5 rounded-full shadow-sm">{{ $topIntern->monthly_points }} Poin</div>
+        </div>
+        @endforeach
+    </div>
+</div>
+@endif
+
 <!-- Stats Grid -->
 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
     <!-- Stat 1 -->

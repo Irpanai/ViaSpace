@@ -42,6 +42,9 @@ class DashboardController extends Controller
                              ->exists();
         });
 
-        return view('admin.dashboard', compact('presentToday', 'scheduledToday', 'missingCheckIn', 'missingCheckOut'));
+        // Top Interns (Leaderboard)
+        $topInterns = $interns->sortByDesc('monthly_points')->take(5);
+
+        return view('admin.dashboard', compact('presentToday', 'scheduledToday', 'missingCheckIn', 'missingCheckOut', 'topInterns'));
     }
 }

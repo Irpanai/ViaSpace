@@ -54,6 +54,14 @@ Route::prefix('admin')->name('admin.')->middleware(['auth'])->group(function () 
     
     // Reminders
     Route::post('/calendar/reminder', [\App\Http\Controllers\Admin\CalendarController::class, 'sendReminder'])->name('calendar.reminder');
+    
+    // Leaves
+    Route::get('/leaves', [\App\Http\Controllers\Admin\LeaveController::class, 'index'])->name('leaves.index');
+    Route::post('/leaves/{id}', [\App\Http\Controllers\Admin\LeaveController::class, 'update'])->name('leaves.update');
+    
+    // Grades
+    Route::get('/grades', [\App\Http\Controllers\Admin\GradeController::class, 'index'])->name('grades.index');
+    Route::post('/grades', [\App\Http\Controllers\Admin\GradeController::class, 'store'])->name('grades.store');
 });
 
 // Intern Routes
@@ -61,10 +69,16 @@ Route::middleware(['auth', \App\Http\Middleware\ForcePasswordChange::class])->pr
     Route::get('/dashboard', [\App\Http\Controllers\Intern\DashboardController::class, 'index'])->name('dashboard');
     Route::post('/check-in', [\App\Http\Controllers\Intern\DashboardController::class, 'checkIn'])->name('checkin');
     Route::post('/check-out', [\App\Http\Controllers\Intern\DashboardController::class, 'checkOut'])->name('checkout');
-    Route::post('/leave', [\App\Http\Controllers\Intern\DashboardController::class, 'submitLeave'])->name('leave');
     
     // Schedule
     Route::get('/schedule', [\App\Http\Controllers\Intern\ScheduleController::class, 'index'])->name('schedule');
+    
+    // Leave Request
+    Route::get('/leave', [\App\Http\Controllers\Intern\LeaveController::class, 'index'])->name('leave');
+    Route::post('/leave', [\App\Http\Controllers\Intern\LeaveController::class, 'store'])->name('leave.store');
+    
+    // Grades
+    Route::get('/grades', [\App\Http\Controllers\Intern\GradeController::class, 'index'])->name('grades.index');
     
     // History & Export
     Route::get('/history', [\App\Http\Controllers\Intern\HistoryController::class, 'index'])->name('history');
