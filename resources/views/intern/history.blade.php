@@ -135,6 +135,23 @@
                                             <div class="text-xs text-gray-500 line-clamp-2 mt-0.5" title="{{ $att->logbook->description }}">{{ $att->logbook->description }}</div>
                                         </div>
                                     </div>
+                                @elseif($att->leave_reason)
+                                    <div class="flex items-start gap-3">
+                                        <div>
+                                            <div class="text-sm font-bold text-gray-800">
+                                                @if($att->status === 'present')
+                                                    Presensi Manual
+                                                @elseif($att->status === 'permission')
+                                                    Izin
+                                                @elseif($att->status === 'sick')
+                                                    Sakit
+                                                @else
+                                                    {{ ucfirst($att->status) }}
+                                                @endif
+                                            </div>
+                                            <div class="text-xs text-gray-500 line-clamp-2 mt-0.5" title="{{ $att->leave_reason }}">{{ $att->leave_reason }}</div>
+                                        </div>
+                                    </div>
                                 @else
                                     <span class="text-gray-400 text-sm italic">Belum mengisi logbook</span>
                                 @endif
@@ -148,7 +165,7 @@
                                     <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-red-100 text-red-700">
                                         <span class="w-1.5 h-1.5 rounded-full bg-red-500"></span> Sakit
                                     </span>
-                                @elseif($att->status == 'permit')
+                                @elseif($att->status == 'permit' || $att->status == 'izin' || $att->status == 'permission')
                                     <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-blue-100 text-blue-700">
                                         <span class="w-1.5 h-1.5 rounded-full bg-blue-500"></span> Izin
                                     </span>

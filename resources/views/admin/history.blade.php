@@ -101,7 +101,15 @@
                                     <div class="flex items-start gap-3">
                                         <div>
                                             <div class="text-sm font-bold text-gray-800">
-                                                {{ $att->status === 'present' ? 'Presensi Manual' : ucfirst($att->status) }}
+                                                @if($att->status === 'present')
+                                                    Presensi Manual
+                                                @elseif($att->status === 'permission')
+                                                    Izin
+                                                @elseif($att->status === 'sick')
+                                                    Sakit
+                                                @else
+                                                    {{ ucfirst($att->status) }}
+                                                @endif
                                             </div>
                                             <div class="text-xs text-gray-500 line-clamp-2 mt-0.5" title="{{ $att->leave_reason }}">{{ $att->leave_reason }}</div>
                                         </div>
@@ -119,7 +127,7 @@
                                     <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-red-100 text-red-700">
                                         <span class="w-1.5 h-1.5 rounded-full bg-red-500"></span> Sakit
                                     </span>
-                                @elseif($att->status == 'permit' || $att->status == 'izin')
+                                @elseif($att->status == 'permit' || $att->status == 'izin' || $att->status == 'permission')
                                     <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-blue-100 text-blue-700">
                                         <span class="w-1.5 h-1.5 rounded-full bg-blue-500"></span> Izin
                                     </span>
